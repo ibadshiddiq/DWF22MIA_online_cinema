@@ -1,4 +1,4 @@
-const { transaction, category } = require("../../models");
+const { user, film, transaction } = require("../../models");
 const fs = require("fs");
 
 exports.createTransaction = async (req, res) => {
@@ -26,8 +26,24 @@ exports.createTransaction = async (req, res) => {
 exports.getTransaction = async (req, res) => {
   try {
     let datatransaction = await transaction.findAll({
+      include: [
+        {
+          model: user,
+          as: "user",
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+        {
+          model: film,
+          as: "film",
+          attributes: {
+            exclude: ["createdAt", "updatedAt", "userid", "categoryid"],
+          },
+        },
+      ],
       attributes: {
-        exclude: ["createdAt", "updatedAt"],
+        exclude: ["createdAt", "updatedAt", "filmid", "userid"],
       },
     });
 
