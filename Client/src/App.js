@@ -96,9 +96,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "./components/Navbar";
 
 import Home from "./components/pages/HomePage";
-// import FilmList from './pages/FilmList/FilmList';
-// import AddFilm from './pages/AddFilm/AddFilm';
-// import FilmDetails from './pages/FilmDetails/FilmDetails';
+import ListFilm from "./components/pages/ListFilm";
+import AddFilm from "./components/pages/AddFilm";
+import DetailPage from "./components/pages/DetailPage";
 // import Profile from './pages/Profile/Profile';
 
 function App() {
@@ -109,13 +109,9 @@ function App() {
           <Navbar />
           <Switch>
             <Route path="/" exact component={Home}></Route>
-            {/* <PrivateRoute path='/film-list' exact component={FilmList}></PrivateRoute>
-          <PrivateRoute path='/add-film' exact component={AddFilm}></PrivateRoute> */}
-            {/* <PrivateRoute
-              path="/films/:id"
-              exact
-              component={FilmDetails}
-            ></PrivateRoute> */}
+            <Route path="/listfilm" exact component={ListFilm}></Route>
+            <Route path="/addfilm" exact component={AddFilm}></Route>
+            <Route path="/films/:id" exact component={DetailPage}></Route>
             {/* <PrivateRoute path='/profile' exact component={Profile}></PrivateRoute> */}
           </Switch>
         </Router>

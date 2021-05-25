@@ -84,7 +84,7 @@ const Navbar = () => {
                 <li>
                   <Link
                     className="dropdown-item"
-                    to={`/userss/${state?.user?.id}`}
+                    to={`/profile/${state?.user?.id}`}
                   >
                     <img className="drop-img" src={Profile} alt="" />
                     Profile

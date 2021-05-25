@@ -26,17 +26,13 @@ function HomePage() {
     <>
       <div className="container mt-5">
         <Hero />
-        <div className="card ">
-          <div className="card-body card-fund">
-            <div className="row">
-              {films &&
-                films.map((film, index) => (
-                  <div className="col" key={film.id + index}>
-                    <Card film={film} />
-                  </div>
-                ))}
-            </div>
-          </div>
+        <div className="row">
+          {films &&
+            films.map((film, index) => (
+              <div className="col" key={film.id + index}>
+                <Card film={film} />
+              </div>
+            ))}
         </div>
       </div>
     </>

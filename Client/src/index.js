@@ -4,7 +4,7 @@ import { UserContextProvider } from "./components/context/userContext";
 import App from "./App";
 import "./styles/index.css";
 import "./styles/modal.css";
-// import "./styles/pages.css";
+import "./styles/pages.css";
 
 ReactDOM.render(
   <React.StrictMode>
