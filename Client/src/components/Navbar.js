@@ -66,16 +66,7 @@ const Navbar = () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <img
-                  className="img-profile"
-                  src={
-                    `http://localhost:5000/${state?.user?.avatar}` ===
-                    "http://localhost:5000/null"
-                      ? Default
-                      : `http://localhost:5000/${state?.user?.avatar}`
-                  }
-                  alt=""
-                />
+                <img className="img-profile" src={"/default.png"} alt="" />
               </button>
               <ul
                 className="dropdown-menu"

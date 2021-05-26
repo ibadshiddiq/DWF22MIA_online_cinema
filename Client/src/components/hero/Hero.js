@@ -30,10 +30,6 @@ function Hero() {
                 >
                   Buy Now
                 </div>
-                {/* <ModalLogin
-                  open={isOpen}
-                  onClose={() => setIsOpen(false)}
-                ></ModalLogin> */}
               </>
             ) : (
               <div
