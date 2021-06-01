@@ -12,9 +12,12 @@ function Card({ film }) {
 
   return (
     <div>
-      <div className="cards mb-5">
-        <div className="cardimage" onClick={goToPage}>
-          <img src={`http://localhost:5000/uploads/${thumbnail}`}></img>
+      <div className="cards mb-4">
+        <div className="card-image-container" onClick={goToPage}>
+          <img
+            src={`http://localhost:5000/uploads/${thumbnail}`}
+            className="img-dono"
+          ></img>
         </div>
       </div>
     </div>

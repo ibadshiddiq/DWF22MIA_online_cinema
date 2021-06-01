@@ -1,19 +1,26 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { API } from "../../components/config/api";
-import ModalBuy from "../../components/modal/Buy";
+import { API } from "../config/api";
 
-function DetailPage() {
+import FormModal from "../modal/Modal";
+import BuyModal from "../modal/Buy";
+
+import LiteYouTubeEmbed from "react-lite-youtube-embed";
+import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
+import youtubeGetID from "../../utils/youtube";
+function DetailFIlm() {
   const params = useParams();
   const { id } = params;
 
-  const [show, setShow] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [showBuy, setShowBuy] = useState(false);
+
+  const handleShowBuy = () => setShowBuy(true);
+  const handleCloseBuy = () => setShowBuy(false);
+
   const router = useHistory();
 
-  const [film, setFilm] = useState([]);
+  const [film, setFilm] = useState();
+
   const loadFilm = async () => {
     try {
       const response = await API.get(`/films/${id}`);
@@ -27,29 +34,48 @@ function DetailPage() {
     loadFilm();
   }, []);
 
-  const image_url = `http://localhost:5000/uploads/${film.thumbnail}`;
-
+  const image_url = `http://localhost:5000/uploads/${film?.thumbnail}`;
+  console.log(film);
   return (
-    <div>
-      <div className="container">
-        <div className="film-container">
-          <img src={image_url} className="film-image"></img>
-          <div className="detail-container">
-            <h1>{film.title}</h1>
-            <p className="donate-info">{film.description}</p>
-            <button
-              onClick={() => {
-                setIsOpen(true);
-              }}
-            >
+    <>
+      <FormModal show={showBuy} handleClose={handleCloseBuy}>
+        <BuyModal
+          title={film?.title}
+          price={film?.price}
+          show={showBuy}
+          handleClose={() => setShowBuy(false)}
+        ></BuyModal>
+      </FormModal>
+      <div className="film-container">
+        <div className="film-content">
+          <img src={image_url} className="detail-film-image"></img>
+        </div>
+        <div className="detail-content">
+          <div className="title-buy">
+            <h3>{film?.title}</h3>
+
+            <button className="hero-link" onClick={handleShowBuy}>
               Buy Now
             </button>
-            <ModalBuy open={isOpen} onClose={() => setIsOpen(false)}></ModalBuy>
           </div>
+          {/* Videos goes here */}
+          {film?.filmURL && (
+            <div>
+              <LiteYouTubeEmbed
+                id={youtubeGetID(film.filmURL)}
+                title="What’s new in Material Design for the web (Chrome Dev Summit 2019)"
+              />
+            </div>
+          )}
+
+          {/* Categories goes here */}
+          {/* Price */}
+          <p className="pricedetail"> Rp. {film?.price}</p>
+          <p>{film?.description}</p>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default DetailPage;
+export default DetailFIlm;

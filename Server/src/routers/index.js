@@ -5,9 +5,10 @@ const router = express.Router();
 const { auth } = require("../middlewares/auth");
 const { uploadFile } = require("../middlewares/uploadFile");
 
-const { regitrasi, login } = require("../controllers/auth");
+const { regitrasi, login, authUser } = require("../controllers/auth");
 router.post("/register", regitrasi);
 router.post("/login", login);
+router.get("/authuser", auth, authUser);
 
 // USER
 const {
@@ -19,7 +20,7 @@ const {
 router.get("/userss", auth, getUser);
 router.get("/userss/:id", auth, getUserDetail);
 router.delete("/userss/:id", auth, deleteUser);
-router.put("/userss/:id", uploadFile("avatar"), updateProfile);
+router.patch("/userss/:id", uploadFile("avatar"), updateProfile);
 
 // CATEGORY
 const { createCategory, getCategory } = require("../controllers/category");

@@ -1,4 +1,4 @@
-const { user } = require("../../models");
+const { user, donate, film } = require("../../models");
 const fs = require("fs");
 
 exports.getUser = async (req, res) => {
@@ -95,58 +95,118 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
+// exports.updateProfile = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+
+//     const finduser = await user.findOne({ where: { id } });
+
+//     if (!finduser) {
+//       return res.send({
+//         status: "failed",
+//         message: "data not found",
+//       });
+//     }
+
+//     if (req.files) {
+//       var avatar = req.files.avatar[0].filename;
+//       fs.unlink(`uploads/${finduser.avatar}`, (err) => {
+//         if (err) {
+//           console.log(err);
+//         }
+//       });
+//     }
+
+//     const datauser = {
+//       ...req.body,
+//       avatar,
+//     };
+
+//     await user.update(datauser, {
+//       where: { id },
+//     });
+
+//     const updateUser = await user.findOne({
+//       where: { id },
+//       attributes: { exclude: ["updatedAt", "createdAt"] },
+//     });
+
+//     res.status(200).send({
+//       status: "Success",
+//       data: {
+//         user: {
+//           fullName: updateUser.fullName,
+//           email: updateUser.email,
+//           phone: updateUser.phone,
+//           avatar: updateUser.avatar,
+//         },
+//       },
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({
+//       status: "failed",
+//       message: "server error WKWKKWW",
+//     });
+//   }
+// };
 exports.updateProfile = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
+    const body = req.body;
 
-    const finduser = await user.findOne({ where: { id } });
+    const findUser = await user.findOne({ where: { id } });
 
-    if (!finduser) {
+    if (!findUser) {
       return res.send({
-        status: "failed",
-        message: "data not found",
+        status: "Error",
+        message: "User doesn't exist",
       });
     }
 
     if (req.files) {
       var avatar = req.files.avatar[0].filename;
-      fs.unlink(`uploads/${finduser.avatar}`, (err) => {
+
+      fs.stat(`uploads/${findUser.avatar}`, function (err, stats) {
         if (err) {
-          console.log(err);
+          return console.log(err);
         }
+
+        fs.unlink(`uploads/${findUser.avatar}`, (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
       });
     }
 
-    const datauser = {
-      ...req.body,
+    const dataUpdated = {
+      ...body,
       avatar,
     };
 
-    await user.update(datauser, {
+    await user.update(dataUpdated, {
       where: { id },
     });
 
     const updateUser = await user.findOne({
-      where: { id },
-      attributes: { exclude: ["updatedAt", "createdAt"] },
-    });
-
-    res.status(200).send({
-      status: "Success",
-      data: {
-        user: {
-          fullName: updateUser.fullName,
-          email: updateUser.email,
-          phone: updateUser.phone,
-          avatar: updateUser.avatar,
-        },
+      where: {
+        id,
+      },
+      attributes: {
+        exclude: ["updatedAt", "createdAt", "password"],
       },
     });
+    console.log(updateUser),
+      res.status(200).send({
+        status: "success",
+        data: { user: updateUser },
+      });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       status: "failed",
-      message: "server error WKWKKWW",
+      message: "server error",
     });
   }
 };

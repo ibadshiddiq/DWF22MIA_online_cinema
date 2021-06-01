@@ -14,7 +14,7 @@ exports.regitrasi = async (req, res) => {
       fullName: joi.string().min(3).required(),
     });
 
-    const { error } = schema.validate(req.body);
+    const { error } = schema.validate(data);
 
     if (error) {
       return res.send({
@@ -36,22 +36,26 @@ exports.regitrasi = async (req, res) => {
       });
     }
 
-    const secretKey = "myCustomPassword";
-    const token = jwt.sign(
-      {
-        id: email,
-      },
-      secretKey
-    );
-
-    const hashStrenght = 10;
-    const hashedPassword = await bcrypt.hash(password, hashStrenght);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const dataUser = await user.create({
       ...data,
       password: hashedPassword,
     });
 
+    const updateUser = await user.findOne({
+      where: {
+        email,
+      },
+    });
+
+    const secretKey = process.env.SECRET_KEY;
+    const token = jwt.sign(
+      {
+        id: updateUser.id,
+      },
+      secretKey
+    );
     res.send({
       status: "Success",
       data: {
@@ -101,21 +105,18 @@ exports.login = async (req, res) => {
         message: "Email and Password don't match",
       });
     }
+    const checkPassword = await bcrypt.compare(password, checkEmail.password);
 
-    const isValidPassword = await bcrypt.compare(password, checkEmail.password);
-
-    if (!isValidPassword) {
+    if (!checkPassword) {
       return res.send({
         status: "Login Failed",
         message: "Email and Password don't match",
       });
     }
-
-    const secretKey = "myCustomPassword";
-
+    const secretKey = process.env.SECRET_KEY;
     const token = jwt.sign(
       {
-        id: email,
+        id: checkEmail.id,
       },
       secretKey
     );
@@ -128,6 +129,47 @@ exports.login = async (req, res) => {
           fullName: checkEmail.fullName,
           email: checkEmail.email,
           token,
+        },
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      status: "failed",
+      message: "server error",
+    });
+  }
+};
+
+exports.authUser = async (req, res) => {
+  try {
+    const id = req.userid;
+
+    const dataUser = await user.findOne({
+      where: {
+        id,
+      },
+      attributes: {
+        exclude: ["createdAt", "updateAt", "password"],
+      },
+    });
+
+    if (!dataUser) {
+      return res.status(404).send({
+        status: "Failed",
+      });
+    }
+
+    res.status(200).send({
+      status: "Success",
+      message: "user valid",
+      data: {
+        user: {
+          id: dataUser.id,
+          name: dataUser.fullName,
+          email: dataUser.email,
+          avatar: dataUser.avatar,
+          phone: dataUser.phone,
         },
       },
     });

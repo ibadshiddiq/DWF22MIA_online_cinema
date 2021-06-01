@@ -1,17 +1,22 @@
-import React, { useContext, useState } from "react";
-import { API } from "../../components/config/api";
+import React, { useContext, useState, useEffect } from "react";
+import { API } from "../config/api";
 import { useParams } from "react-router-dom";
-import ReactDom from "react-dom";
-import { UserContext } from "../../components/context/userContext";
+import { Image } from "react-bootstrap";
 
-function ModalBuy({ open, onClose }) {
+import { UserContext } from "../context/userContext";
+
+import Transferpayment from "../pictures/Transferpayment.svg";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+function BuyModal({ show, handleClose }) {
   const params = useParams();
   const { id } = params;
+  const [preview, setPreview] = useState();
   const [, dispatch] = useContext(UserContext);
 
   const [form, setForm] = useState({
     accountNumber: "",
-    transferProof: null,
+    transferProof: "",
   });
 
   const onChange = (e) => {
@@ -40,30 +45,41 @@ function ModalBuy({ open, onClose }) {
 
       await API.post(`/transaction/${id}`, formData, config);
 
-      onClose();
+      handleClose();
     } catch (error) {
       console.log(error);
     }
   };
 
-  if (!open) return null;
-  return ReactDom.createPortal(
+  if (!show) return null;
+  return (
     <>
-      <div className="dark-overlay" onClick={onClose}></div>
-      <div className="modal-donate">
-        <div className="modal-sample-content">
+      <div className="modal-content" onClick={handleClose}></div>
+
+      <div className="modal-buy">
+        <div className="header">
+          <h3>Cinema Online : </h3>
+        </div>
+        <h3>Judul Film</h3>
+        <div className="total-payment">
+          <h4> Total : </h4>
+          <div className="total-payment-number">
+            <h4> Rp.5000 </h4>
+          </div>
+        </div>
+        <div className="title-modal1">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleSubmit();
             }}
           >
-            <div className="input-group-sample">
+            <div className="form-modal1">
               <input
                 type="number"
                 name="accountNumber"
                 placeholder="Input Your Account Number"
-                className=" grab-input"
+                className="input-modal1"
                 onChange={(e) => onChange(e)}
               ></input>
 
@@ -74,45 +90,38 @@ function ModalBuy({ open, onClose }) {
                 }}
               >
                 <input
+                  className="input-modal1"
                   type="file"
                   id="add-thumb"
                   name="transferProof"
                   onChange={(e) => onChange(e)}
                   hidden
                 />
-                <label
-                  for="add-thumb"
-                  id="label-thumb"
-                  style={{
-                    marginRight: "50px",
-                    width: "50%",
-                  }}
-                >
-                  Attach Thumbnail
-                </label>
-                <p
-                  style={{
-                    width: "70%",
-                  }}
-                >
-                  *transfers can be made to cinema accounts
-                </p>
+                <div className="attach-note">
+                  <label className="hero-link" for="add-thumb" id="label-thumb">
+                    Attach Payment
+                    <img alt="icon payment" src={Transferpayment} />
+                  </label>
+
+                  <div className="noteBuyModal">
+                    <p>*transfers can be made to cinema accounts</p>
+                  </div>
+                </div>
               </div>
             </div>
 
             <button
               type="submit"
               style={{ textAlign: "center" }}
-              className="modal-sample-link"
+              className="pay-hero-link"
             >
               Pay
             </button>
           </form>
         </div>
       </div>
-    </>,
-    document.getElementById("portal")
+    </>
   );
 }
 
-export default ModalBuy;
+export default BuyModal;

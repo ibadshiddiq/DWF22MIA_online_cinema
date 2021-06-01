@@ -25,31 +25,31 @@ exports.createTransaction = async (req, res) => {
 
 exports.getTransaction = async (req, res) => {
   try {
-    let datatransaction = await transaction.findAll({
-      include: [
-        {
-          model: user,
-          as: "user",
-          attributes: {
-            exclude: ["createdAt", "updatedAt"],
-          },
-        },
-        {
-          model: film,
-          as: "film",
-          attributes: {
-            exclude: ["createdAt", "updatedAt", "userid", "categoryid"],
-          },
-        },
-      ],
+    let dataTransactions = await transaction.findAll({
+      // include: [
+      //   {
+      //     model: user,
+      //     as: "user",
+      //     attributes: {
+      //       exclude: ["createdAt", "updatedAt"],
+      //     },
+      //   },
+      //   {
+      //     model: film,
+      //     as: "film",
+      //     attributes: {
+      //       exclude: ["createdAt", "updatedAt", "userid", "categoryid"],
+      //     },
+      //   },
+      // ],
       attributes: {
-        exclude: ["createdAt", "updatedAt", "filmid", "userid"],
+        exclude: ["createdAt", "updatedAt"],
       },
     });
 
     res.status(200).send({
       status: "success",
-      data: { transaction: datatransaction },
+      data: dataTransactions,
     });
   } catch (error) {
     console.log(error);

@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-exports.auth = (req, res, next) => {
+exports.auth = async (req, res, next) => {
   try {
     let header = req.header("Authorization");
 
@@ -13,11 +13,11 @@ exports.auth = (req, res, next) => {
       });
     }
 
-    const secretKey = "myCustomPassword";
+    const secretKey = process.env.SECRET_KEY;
 
     const verified = jwt.verify(token, secretKey);
 
-    req.userId = verified.id;
+    req.userid = verified.id;
 
     next();
   } catch (error) {

@@ -1,21 +1,40 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { API } from "../config/api";
 
-function AddFilm() {
-  const router = useHistory();
+import { Form, Image, Button } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-  const [form, setForm] = useState({
+const AddFilm = () => {
+  const router = useHistory();
+  const [preview, setPreview] = useState();
+  const initialState = {
+    categoryid: "",
     title: "",
-    thumbnail: null,
-    category: "",
     price: "",
-    link: "",
+    filmURL: "",
     description: "",
-  });
+    thumbnail: "",
+  };
+
+  const [form, setFormData] = useState(initialState);
+  const clearState = () => {
+    setFormData({ ...initialState });
+  };
+  useEffect(() => {
+    if (!form.thumbnail) {
+      setPreview(undefined);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(form.thumbnail);
+    setPreview(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [form.thumbnail]);
 
   const onChange = (e) => {
-    setForm({
+    setFormData({
       ...form,
       [e.target.name]:
         e.target.type === "file" ? e.target.files[0] : e.target.value,
@@ -32,21 +51,17 @@ function AddFilm() {
 
       const formData = new FormData();
       formData.set("title", form.title);
-      formData.append("imageFile", form.thumbnail, form.thumbnail.name);
-      formData.set("category", form.category);
       formData.set("price", form.price);
-      formData.set("link", form.link);
+      formData.set("filmURL", form.filmURL);
       formData.set("description", form.description);
+      formData.append("thumbnail", form.thumbnail, form.thumbnail.name);
+      formData.set("categoryid", form.categoryid);
+      formData.set("userid", form.userid);
 
-      const response = await API.post("/film", formData, config);
+      await API.post(`/film`, formData, config);
 
-      //setMessage(response.data.message);
-
-      if (response.data.status === "failed") {
-        router.push("/addfilm");
-      } else {
-        router.push("/addfilm");
-      }
+      clearState();
+      router.push("/addfilm");
     } catch (error) {
       console.log(error);
     }
@@ -55,66 +70,96 @@ function AddFilm() {
   return (
     <>
       <div className="container mt-5">
-        <form
+        <div className="hero-content">
+          <h3>Add Films</h3>
+        </div>
+
+        <Form
           onSubmit={(e) => {
             e.preventDefault();
-            handleSubmit();
+            handleSubmit(e);
           }}
         >
-          <input
+          <Form.Control
+            onChange={(e) => onChange(e)}
+            className="input-modal1"
             type="text"
             placeholder="Title"
             name="title"
-            onChange={(e) => onChange(e)}
-          ></input>
-          <br />
+          />
+          <div>
+            {form.thumbnail && (
+              <Image
+                style={{ maxWidth: "300px", height: "230px" }}
+                src={preview}
+              />
+            )}
+          </div>
+
           <input
+            onChange={(e) => onChange(e)}
             type="file"
             id="add-thumb"
             name="thumbnail"
-            onChange={(e) => onChange(e)}
             hidden
           />
-          <label for="add-thumb" id="label-thumb">
+          <label for="add-thumb" id="label-thumb" className="hero-link">
             Attach Thumbnail
           </label>
-          <br></br>
-          <input
-            type="text"
-            placeholder="Category"
-            name="category"
-            onChange={(e) => onChange(e)}
-          ></input>
+
           <br />
-          <input
+          <Form.Control
+            onChange={(e) => onChange(e)}
+            className="input-modal1"
             type="number"
             placeholder="Price"
             name="price"
-            onChange={(e) => onChange(e)}
-          ></input>
+          />
           <br />
-          <input
+          <Form.Control
+            onChange={(e) => onChange(e)}
+            className="input-modal1"
             type="text"
             placeholder="Trailer Link"
-            name="link"
-            onChange={(e) => onChange(e)}
-          ></input>
+            name="filmURL"
+          />
           <br />
           <textarea
+            onChange={(e) => onChange(e)}
+            className="input-modal1"
+            row={300}
+            cols={145}
             placeholder="description"
             name="description"
-            onChange={(e) => onChange(e)}
-          ></textarea>
+          />
           <br />
-          <div className="btn-container pb-3">
-            <button type="submit" className="btn-fund">
-              Add Film
-            </button>
+
+          <br></br>
+          <Form.Control
+            onChange={(e) => onChange(e)}
+            className="input-modal1"
+            type="text"
+            placeholder="Categoryid"
+            name="categoryid"
+          />
+
+          <br />
+          <Form.Control
+            onChange={(e) => onChange(e)}
+            className="input-modal1"
+            type="text"
+            placeholder="UserId"
+            name="userid"
+          />
+          <div className="btn-container pb-3 float-right">
+            <Button className="hero-link" type="submit" variant="danger">
+              Publish Film
+            </Button>
           </div>
-        </form>
+        </Form>
       </div>
     </>
   );
-}
+};
 
 export default AddFilm;

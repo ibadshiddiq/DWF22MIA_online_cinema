@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { UserContext } from "../context/userContext";
-// import ModalLogin from "../modal/Login";
 
 function Hero() {
   const [state] = useContext(UserContext);
@@ -41,6 +40,9 @@ function Hero() {
             )}
           </div>
         </div>
+      </div>
+      <div className="hero-content">
+        <h3>List Film</h3>
       </div>
     </div>
   );
